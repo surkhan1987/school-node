@@ -13,13 +13,13 @@ module.exports = (roles = []) => {
         if (err) {
           return res.status(401).json({ message: 'session_expired' })
         }
-        if (!user.branch) {
+        if (!user.branch && user.type !== 'admin') {
           return res.status(403).json({ message: 'forbidden' })
         }
         if (roles.length !== 0 && !roles.includes(user.type)) {
           return res.status(403).json({ message: 'forbidden' })
         }
-        req.user = { ...user, branch: new Types.ObjectId(user.branch) }
+        req.user = { ...user, branch: user.branch ? new Types.ObjectId(user.branch) : null }
         next()
       })
     } catch (error) {
